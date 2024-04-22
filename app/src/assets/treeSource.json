@@ -1,0 +1,59 @@
+[
+    {
+      "title": ".git demo"
+    },
+    {
+      "title": "node_modules"
+    },
+    {
+      "title": "public",
+      "children": [
+        {
+          "title": "static",
+          "children": [
+            {
+              "title": "logo.png",
+              "file": "png"
+            }
+          ]
+        },
+        {
+          "title": "favicon.ico",
+          "file": "png"
+        },
+        {
+          "title": "index.html",
+          "file": "html"
+        }
+      ]
+    },
+    {
+      "title": ".gitignore",
+      "file": "txt"
+    },
+    {
+      "title": "babel.config.js",
+      "file": "js"
+    },
+    {
+      "title": "package.json",
+      "file": "json"
+    },
+    {
+      "title": "README.md",
+      "file": "md"
+    },
+    {
+      "title": "vue.config.js",
+      "file": "js"
+    },
+    {
+      "title": "yarn.lock",
+      "file": "txt"
+    },
+    {
+      "title": "other",
+      "file": "other"
+    }
+  ]
+  
