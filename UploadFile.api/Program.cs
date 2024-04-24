@@ -38,9 +38,21 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(requirement);
 });
 
-var app = builder.Build();
+var corsName="AllowAnyOrigin";
 
-app.UseMiddleware<ApiKeyMiddleware>();
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(corsName,
+            policy =>
+            {
+                policy.SetIsOriginAllowed(origin => true)//.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials();
+            });
+    });
+
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -49,8 +61,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(corsName);
 app.UseAuthorization();
 app.UseAuthentication();
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapControllers();
 app.Run();

@@ -9,7 +9,9 @@
       <v-list-item link title="Inicio" href="/" prepend-icon="mdi-home"></v-list-item>
       <v-divider></v-divider>
       <v-list-item link title="Productos" href="/productos" prepend-icon="mdi-nutrition"></v-list-item>
-      <v-list-item link title="Archivos" href="/archivos" prepend-icon="mdi-file-multiple"></v-list-item>
+      <v-list-item link title="Arbol de archivos" href="/archivos" prepend-icon="mdi-file-multiple"></v-list-item>
+      <v-list-item link title="Subir Archivos" href="/uploadFile" prepend-icon="mdi-file-upload"></v-list-item>
+      
     </v-navigation-drawer>
 
     <v-main class="ma-8">
@@ -24,3 +26,12 @@ import { ref } from 'vue'
 const drawer = ref(null)
 
 </script>
+
+<style>
+.bottom-alert {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+</style>

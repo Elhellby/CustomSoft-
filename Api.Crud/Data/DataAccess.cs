@@ -39,20 +39,28 @@ namespace Api.Crud.Data
 
         public DataTable ExecuteReader(string query, NpgsqlParameter[]? parameters)
         {
-            var connection = new NpgsqlConnection(_connectionString);
-            var command = new NpgsqlCommand(query, connection);
-
-            if (parameters != null)
-                command.Parameters.AddRange(parameters);
-
-            connection.Open();
             var dataTable = new DataTable();
-            using var reader = command.ExecuteReader();
-            dataTable.Load(reader);
+
+            try
+            {
+                var connection = new NpgsqlConnection(_connectionString);
+                var command = new NpgsqlCommand(query, connection);
+
+                if (parameters != null)
+                    command.Parameters.AddRange(parameters);
+
+                connection.Open();
+                using var reader = command.ExecuteReader();
+                dataTable.Load(reader);
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine(ex.Message);
+            }
 
             return dataTable;
         }
-    
+
         public List<T> ConvertirDataTableAProductos<T>(DataTable dataTable)
         {
             var productos = new List<T>();

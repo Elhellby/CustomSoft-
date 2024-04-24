@@ -7,12 +7,14 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AlertMessage: typeof import('./components/alertMessage.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     Archivos: typeof import('./components/archivos.vue')['default']
     copy: typeof import('./components/tableComponent copy.vue')['default']
     CustomTreeViewItemComponent: typeof import('./components/customTreeViewItemComponent.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Home: typeof import('./components/Home.vue')['default']
+    MessageComponent: typeof import('./components/messageComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Table: typeof import('./components/table.vue')['default']

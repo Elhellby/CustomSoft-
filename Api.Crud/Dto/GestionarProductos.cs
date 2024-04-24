@@ -6,7 +6,7 @@ using Api.Crud.Utils;
 using Newtonsoft.Json;
 using Npgsql;
 
-namespace Api.Crud.Data
+namespace Api.Crud.Dto
 {
     public class GestionarProductos : DataAccess
     {
@@ -33,7 +33,7 @@ namespace Api.Crud.Data
                     table = ActualizarProducto(model);
                     break;
                 case TypeCrud.Delete:
-                    BorrarProducto(model);
+                    table =BorrarProducto(model);
                     break;
                 default:
                     throw new ArgumentException("Estado no válido para la gestión de productos.");
@@ -54,7 +54,7 @@ namespace Api.Crud.Data
                 new NpgsqlParameter("@descripcion", model.Descripcion ?? (object)DBNull.Value),
                 new NpgsqlParameter("@precio", model.Precio),
                 new NpgsqlParameter("@categoria", model.Categoria ?? (object)DBNull.Value),
-                new NpgsqlParameter("@cantidad", model.CantidadEnStock),
+                new NpgsqlParameter("@cantidad", model.cantidad_en_stock),
                 new NpgsqlParameter("@proveedor", model.Proveedor ?? (object)DBNull.Value)
             };
 
@@ -90,7 +90,7 @@ namespace Api.Crud.Data
                 new NpgsqlParameter("@descripcion", model.Descripcion ?? (object)DBNull.Value),
                 new NpgsqlParameter("@precio", model.Precio),
                 new NpgsqlParameter("@categoria", model.Categoria ?? (object)DBNull.Value),
-                new NpgsqlParameter("@cantidad", model.CantidadEnStock),
+                new NpgsqlParameter("@cantidad", model.cantidad_en_stock),
                 new NpgsqlParameter("@proveedor", model.Proveedor ?? (object)DBNull.Value)
             };
 

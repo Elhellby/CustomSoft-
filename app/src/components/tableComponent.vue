@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'calories', order: 'asc' }]">
+  <v-data-table :headers="headers" :items="desserts" :sort-by="[{ key: 'id', order: 'asc' }]">
     <template v-slot:top>
       <v-toolbar flat>
 
@@ -34,17 +34,11 @@
                     <v-text-field v-model="editedItem.categoria" label="Categoria"></v-text-field>
                   </v-col>
                   <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.cantidadEnStock" label="Stock" type="number"></v-text-field>
+                    <v-text-field v-model="editedItem.cantidad_en_stock" label="Stock" type="number"></v-text-field>
                   </v-col>
                   <v-col cols="12" md="4" sm="6">
                     <v-text-field v-model="editedItem.proveedor" label="Proveedor"></v-text-field>
                   </v-col>
-                  <!-- <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.fechaCreacion" label="Creado"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field v-model="editedItem.fechaModificacion" label="Modificado"></v-text-field>
-                  </v-col> -->
                 </v-row>
               </v-container>
             </v-card-text>
@@ -87,10 +81,14 @@
       </v-btn>
     </template>
   </v-data-table>
+
+  <AlertMessage :message="alertMessage" :visible="showAlert" :time="2000" :type="type"/>
 </template>
 
 <script>
-import axios from "axios";
+import productosService from '../services/productosService.ts'
+
+
 export default {
   data: () => ({
     dialog: false,
@@ -106,7 +104,7 @@ export default {
       { title: 'Descripcion', key: 'descripcion' },
       { title: 'Precio', key: 'precio' },
       { title: 'Categoria', key: 'categoria' },
-      { title: 'Stock', key: 'cantidadEnStock' },
+      { title: 'Stock', key: 'cantidad_en_stock' },
       { title: 'Proveedor', key: 'proveedor' },
       // { title: 'Creado', key: 'fechaCreacion' },
       // { title: 'Modificado', key: 'fechaModificacion' },
@@ -120,7 +118,7 @@ export default {
       descripcion: '',
       precio: 0,
       categoria: '',
-      cantidadEnStock: 0,
+      cantidad_en_stock: 0,
       proveedor: ''
 
     },
@@ -129,9 +127,12 @@ export default {
       descripcion: '',
       precio: 0,
       categoria: '',
-      cantidadEnStock: 0,
+      cantidad_en_stock: 0,
       proveedor: ''
     },
+    showAlert: false,
+      alertMessage:'',
+      type:''
   }),
 
   computed: {
@@ -156,18 +157,8 @@ export default {
   methods: {
     initialize() {
 
-      let config = {
-        method: 'get',
-        url: 'http://localhost:9094/api/Products',
-        headers: {
-          'x-api-key': 'dGIzcWJ4YWU0dTFxYXk5a3o5NnFiMmQ5N2xtcTVwZzA=',
-          'Access-Control-Allow-Origin': '*'
-        }
-      };
-
-      axios.request(config)
-        .then((response) => {
-          this.desserts = response.data
+      productosService.getProductos().then((response) => {
+        this.desserts=response.data
         })
     },
 
@@ -181,27 +172,29 @@ export default {
       this.editedIndex = this.desserts.indexOf(item)
       this.editedItem = Object.assign({}, item)
 
-      let config = {
-        method: 'delete',
-        maxBodyLength: Infinity,
-        url: 'http://localhost:9094/api/Products?id=' + item.id,
-        headers: {
-          'x-api-key': 'dGIzcWJ4YWU0dTFxYXk5a3o5NnFiMmQ5N2xtcTVwZzA='
-        }
-      };
-
-      axios.request(config)
-      // .then((response) => {
-      //   console.log(JSON.stringify(response.data));
-      // })
+      
 
       this.dialogDelete = true
 
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1)
       this.closeDelete()
+      productosService.deleteProducto(this.editedItem.id).then((response) => {
+          this.desserts=response.data
+          this.type='success'
+          this.alertMessage='Registro eliminado¡¡¡'
+          this.showAlert = true;
+        }).catch(()=>{
+          this.type='error'
+          this.alertMessage='Ocurrio un error al eliminar¡¡¡'
+          this.showAlert = true;
+        })
+
+        setTimeout(() => {
+          this.showAlert = false; 
+        }, 2000);
+      
     },
 
     close() {
@@ -227,25 +220,39 @@ export default {
         this.desserts.push(this.editedItem)
       }
 
-      let config = {
-        method: this.editedIndex > -1 ? 'patch' : 'post',
-        maxBodyLength: Infinity,
-        url: 'http://localhost:9094/api/Products',
-        headers: {
-          'x-api-key': 'dGIzcWJ4YWU0dTFxYXk5a3o5NnFiMmQ5N2xtcTVwZzA=',
-          'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(this.editedItem)
-      };
+      const producto= this.editedItem;
 
-      axios.request(config)
-        .then((response) => {
-          console.log(JSON.stringify(response.data));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if(
+        this.editedItem.nombre!='' &&
+        this.editedItem.descripcion!='' &&
+        this.editedItem.precio >=0 &&
+        this.editedItem.categoria!='' &&
+        this.editedItem.cantidad_en_stock >=0 &&
+        this.editedItem.proveedor !=''
+      ){
+        if(this.editedIndex <= -1){
+          productosService.createProducto(producto).then((response) => {
+            this.desserts=response.data
+          })
+        }else{
+          productosService.updateProducto(producto).then((response) => {
+            console.log(response)
+            this.desserts=response.data
+          })
+        }
       this.close()
+      this.type='success'
+          this.alertMessage='Registro guardado¡¡¡'
+          this.showAlert = true;
+      }else{
+        this.type='warning'
+          this.alertMessage='Falta informacion¡¡¡'
+          this.showAlert = true;
+      }
+      setTimeout(() => {
+          this.showAlert = false; 
+        }, 2000);
+      
     },
   },
 }

@@ -1,8 +1,6 @@
-using Api.Crud.Data;
+using Api.Crud.Dto;
 using Api.Crud.Models;
 using Api.Crud.Utils;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MyApp.Namespace
